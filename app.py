@@ -1,8 +1,9 @@
 import os
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from blacklist import BLACKLIST
+
 
 from security import authenticate, identity
 
@@ -64,14 +65,14 @@ def missing_token_callback(error):
     }), 401
 
 @jwt.needs_fresh_token_loader
-def token_not_fresh_callback(error):
+def token_not_fresh_callback():
     return jsonify({
         'description': "Token is not fresh",
         'error': 'fresh_token_required'
     }), 401
 
 @jwt.revoked_token_loader
-def revoked_token_callback(error):
+def revoked_token_callback():
     return jsonify({
         'description': "The token has been revoked",
         'error': 'token_revoked'
